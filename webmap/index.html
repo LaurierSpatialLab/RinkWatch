@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=7,IE=8,IE=9" />
+		<!-- The viewport meta tag is used to improve presentation and behavior on iOS devices -->
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+		<title>RinkWatch</title>
+		<!-- Esri styles: required to draw the map -->
+		<link rel="stylesheet" type="text/css" href="//js.arcgis.com/3.8/js/dojo/dijit/themes/claro/claro.css" />
+		<link rel="stylesheet" type='text/css' href='//js.arcgis.com/3.8/js/esri/css/esri.css' />
+		<!-- Styles for the FloatingPane -->
+		<link rel="stylesheet" type="text/css" href="//js.arcgis.com/3.8/js/dojo/dojox/layout/resources/FloatingPane.css" />
+		<link rel="stylesheet" type="text/css" href="//js.arcgis.com/3.8/js/dojo/dojox/layout/resources/ResizeHandle.css" />
+		<!-- Styles for the Lightbox -->
+		<link rel="stylesheet" type="text/css" href="//js.arcgis.com/3.8/js/dojo/dojox/image/resources/Lightbox.css" />
+		<!-- Styles for the BusyButton -->
+		<link rel="stylesheet" type="text/css" href="//js.arcgis.com/3.8/js/dojo/dojox/form/resources/BusyButton.css" />
+		<!-- Custom style sheets created for RinkWatch -->
+		<link rel="stylesheet" type="text/css" href="css/rinkwatch.css" />
+		<!-- Custom style sheets created for TOC module -->
+		<link rel="stylesheet" type="text/css" media="print" href="css/TOC.css" />
+		<!-- RinkWatch icon -->
+		<link rel="shortcut icon" href="images/rwIcon.ico" />
+		<script>
+			function gup(name) { // from Netlobo.com
+				name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+				var regexS = "[\\?&]" + name + "=([^&#]*)";
+				var regex = new RegExp(regexS);
+				var results = regex.exec(window.location.href);
+				if (results === null) {
+					return "";
+				} else {
+					return results[1];
+				}
+			}
+			//Get url
+			var ln = "en";
+			var languageSetting = gup("ln");
+			if (languageSetting !== null && languageSetting == "fr") {
+				ln = "fr";
+			}
+			// Set dojoConfig based on language
+			dojoConfig = {
+				async: true,
+				parseOnLoad: false,
+				locale: ln,
+				packages: [
+					{
+						name: "rinkwatch",
+						// Location where rinkwatch .js files are stored
+						location: location.pathname.replace(/\/[^/]+$/, "") + "/js"
+					},
+					{
+						name: "modules",
+						// Location where HeatmapLayer, ClusterLayer, TOC, and BusyButton .js files are stored
+						location: location.pathname.replace(/\/[^/]+$/, "") + "/js/modules"
+					}
+				]
+			};
+		</script>
+		<!-- Source of ArcGIS JS API -->
+		<script type="text/javascript" src="//js.arcgis.com/3.8/"></script>
+		<!-- Source of heatmap.js file -->
+		<script type="text/javascript" src="js/modules/heatmap.js"></script>
+		<script type="text/javascript">
+
+			var rinkwatch;	// Set a global rinkwatch variable
+
+			require(
+				[
+
+					"dojo/ready",
+					"dojo/parser",
+
+					"esri/config",
+					"esri/urlUtils",
+
+					"rinkwatch"	// Automatically calls 'main.js' from rinkwatch directory
+
+				], function(
+
+					ready,
+					parser,
+
+					esriConfig,
+					urlUtils,
+
+					rinkwatchClass
+
+				) {
+
+					ready(function() {
+
+						// Define the location of the proxy
+						esriConfig.defaults.io.proxyUrl = "/proxy/proxy.ashx";
+						urlUtils.addProxyRule({
+							urlPrefix: "http://www.rinkwatch.org:8080/arcgis/rest/services",
+							proxyUrl: "/proxy/proxy.ashx"
+						});
+
+						parser.parse();
+						rinkwatch = new rinkwatchClass();
+
+					});
+
+				}
+			);
+		</script>
+	</head>
+	<body class="claro">
+		<div id="mainWindow" data-dojo-type="dijit/layout/BorderContainer" gutters="false">
+			<div id="headerTools" data-dojo-type="dijit/layout/ContentPane" region="top">
+				<div id="toolbar" data-dojo-type="dijit/Toolbar"></div>
+				<div id="imageDiv">
+					<a href="http://www.rinkwatch.org/" title="RinkWatch">
+						<img id="rinkwatchLogo" src="images/rwLogoNew1.png">
+					</a>
+				</div>
+			</div>
+			<div id="map" data-dojo-type="dijit/layout/ContentPane" region="bottom">
+				<div id="heatLayer"></div>
+			</div>
+		</div>
+		<div id="dock" data-dojo-type="dojox/layout/Dock"></div>
+		<div id="rinkwatchMenu" data-dojo-type="dojox/layout/FloatingPane" data-dojo-props="resizable: true, closable: false, dockable: true">
+			<div id="menuFrame" data-dojo-type="dijit/layout/ContentPane">
+				<div id="menuAccordion" data-dojo-type="dijit/layout/AccordionContainer"></div>
+				<div class="esriLogoDiv" data-dojo-type="dijit/layout/ContentPane">
+					<a href="http://www.esri.ca/" class="esriLogo" target="_blank" title="Esri Canada">
+						<img src="images/esriLogo.png">
+					</a>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
